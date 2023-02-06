@@ -51,3 +51,11 @@ func TestDecrementBy(t *testing.T) {
 		t.Errorf("Expected counter to be 2, but got %d", counter.GetCount())
 	}
 }
+
+func TestReset(t *testing.T) {
+	counter := NewCounter(5)
+	counter.Reset()
+	if counter.GetCount() != 0 {
+		t.Errorf("Expected counter to be 0, but got %d", counter.GetCount())
+	}
+}
