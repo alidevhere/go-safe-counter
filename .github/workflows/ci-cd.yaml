@@ -1,15 +1,18 @@
 name: ci-cd pipeline
 
-on [push]:
-  branches:
-    - master
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v3
-          - uses: actions/setup-go@v3
-            with:
-              go-version: 1.19
-          - name: run tests
-            run: go test -v ./...
+on:
+  push:
+    branches:
+      - master
+  jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout
+        - uses: actions/checkout@v3
+        - name: setup go
+        - uses: actions/setup-go@v3
+          with:
+            go-version: 1.19
+        - name: run tests
+          run: go test -v ./...
