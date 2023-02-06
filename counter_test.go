@@ -59,3 +59,11 @@ func TestReset(t *testing.T) {
 		t.Errorf("Expected counter to be 0, but got %d", counter.GetCount())
 	}
 }
+
+func TestSetCount(t *testing.T) {
+	counter := NewCounter(6)
+	counter.SetCount(9)
+	if counter.GetCount() != 9 {
+		t.Errorf("Expected counter to be 9, but got %d", counter.GetCount())
+	}
+}

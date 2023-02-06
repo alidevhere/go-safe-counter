@@ -13,6 +13,7 @@ type Counter[T any] interface {
 	IncrementBy(T)
 	DecrementBy(T)
 	Reset()
+	SetCount(T)
 }
 
 func NewCounter[T incrementable](initialValue T) Counter[T] {
@@ -59,4 +60,10 @@ func (c *counter[T]) Reset() {
 	c.lck.Lock()
 	defer c.lck.Unlock()
 	c.count = 0
+}
+
+func (c *counter[T]) SetCount(n T) {
+	c.lck.Lock()
+	defer c.lck.Unlock()
+	c.count = n
 }
