@@ -10,6 +10,7 @@ type Counter[T any] interface {
 	Increament()
 	Decreament()
 	GetCount() T
+	GetCountAndReset() T
 	Freeze()
 	Release()
 	IncrementBy(T)
@@ -76,4 +77,12 @@ func (c *counter[T]) Freeze() {
 
 func (c *counter[T]) Release() {
 	c.lck.Unlock()
+}
+
+func (c *counter[T]) GetCountAndReset() T {
+	c.lck.Lock()
+	defer c.lck.Unlock()
+	count := c.count
+	c.count = 0
+	return count
 }

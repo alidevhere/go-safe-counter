@@ -85,3 +85,15 @@ func TestRelease(t *testing.T) {
 		t.Errorf("Expected counter to be 6, but got %d", counter.GetCount())
 	}
 }
+
+func TestGetCountAndReset(t *testing.T) {
+	counter := NewCounter(6)
+	if counter.GetCountAndReset() != 6 {
+		t.Errorf("Expected counter to be 6, but got %d", counter.GetCount())
+	}
+
+	if counter.GetCount() != 0 {
+		t.Errorf("Expected counter to be 0, but got %d", counter.GetCount())
+	}
+
+}
