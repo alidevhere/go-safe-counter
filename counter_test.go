@@ -136,10 +136,8 @@ func TestRaceCondition(t *testing.T) {
 	}()
 
 	wg.Wait()
-	counter.CounterWait()
-	if counter.GetCount() > 0 {
-		result += counter.GetCountAndReset()
-	}
+
+	result += counter.GetFinalValue()
 
 	if result != 10000 {
 		t.Errorf("Expected counter to be 10000, but counter got %d result got %d", counter.GetCount(), result)
