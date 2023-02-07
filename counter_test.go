@@ -1,7 +1,9 @@
 package counter
 
 import (
+	"sync"
 	"testing"
+	"time"
 )
 
 func TestNewCounter(t *testing.T) {
@@ -94,6 +96,53 @@ func TestGetCountAndReset(t *testing.T) {
 
 	if counter.GetCount() != 0 {
 		t.Errorf("Expected counter to be 0, but got %d", counter.GetCount())
+	}
+
+}
+
+func TestRaceCondition(t *testing.T) {
+
+	counter := NewCounter(0)
+	wg := sync.WaitGroup{}
+	var result int
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		counter.AddCounterWaitGroup(1)
+		go func() {
+
+			for j := 0; j < 1000; j++ {
+				time.Sleep(time.Millisecond * 10)
+				counter.Increament()
+			}
+
+			wg.Done()
+			counter.Done()
+		}()
+	}
+	timer := time.NewTicker(time.Millisecond * 3)
+
+	go func() {
+		for {
+
+			select {
+			case <-timer.C:
+				result += counter.GetCountAndReset()
+			case <-time.After(time.Second * 5):
+				return
+			}
+
+		}
+	}()
+
+	wg.Wait()
+	counter.CounterWait()
+	if counter.GetCount() > 0 {
+		result += counter.GetCountAndReset()
+	}
+
+	if result != 10000 {
+		t.Errorf("Expected counter to be 10000, but counter got %d result got %d", counter.GetCount(), result)
 	}
 
 }

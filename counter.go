@@ -7,6 +7,9 @@ type incrementable interface {
 }
 
 type Counter[T any] interface {
+	AddCounterWaitGroup(int)
+	CounterWait()
+	Done()
 	Increament()
 	Decreament()
 	GetCount() T
@@ -23,12 +26,14 @@ func NewCounter[T incrementable](initialValue T) Counter[T] {
 	return &counter[T]{
 		count: initialValue,
 		lck:   &sync.Mutex{},
+		wg:    &sync.WaitGroup{},
 	}
 }
 
 type counter[T incrementable] struct {
 	count T
 	lck   *sync.Mutex
+	wg    *sync.WaitGroup
 }
 
 func (c *counter[T]) Increament() {
@@ -44,6 +49,8 @@ func (c *counter[T]) Decreament() {
 }
 
 func (c *counter[T]) GetCount() T {
+	c.lck.Lock()
+	defer c.lck.Unlock()
 	return c.count
 }
 
@@ -85,4 +92,16 @@ func (c *counter[T]) GetCountAndReset() T {
 	count := c.count
 	c.count = 0
 	return count
+}
+
+func (c *counter[T]) AddCounterWaitGroup(i int) {
+	c.wg.Add(i)
+}
+
+func (c *counter[T]) CounterWait() {
+	c.wg.Wait()
+}
+
+func (c *counter[T]) Done() {
+	c.wg.Done()
 }
