@@ -10,6 +10,8 @@ type Counter[T any] interface {
 	Increament()
 	Decreament()
 	GetCount() T
+	Freeze()
+	Release()
 	IncrementBy(T)
 	DecrementBy(T)
 	Reset()
@@ -66,4 +68,12 @@ func (c *counter[T]) SetCount(n T) {
 	c.lck.Lock()
 	defer c.lck.Unlock()
 	c.count = n
+}
+
+func (c *counter[T]) Freeze() {
+	c.lck.Lock()
+}
+
+func (c *counter[T]) Release() {
+	c.lck.Unlock()
 }
