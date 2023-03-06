@@ -11,4 +11,3 @@ go get github.com/alidevhere/go-safe-counter
 
 ```
 
-
