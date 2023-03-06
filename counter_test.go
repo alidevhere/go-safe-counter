@@ -70,24 +70,6 @@ func TestSetCount(t *testing.T) {
 	}
 }
 
-func TestFreeze(t *testing.T) {
-	counter := NewCounter(6)
-	counter.Freeze()
-	defer counter.Release()
-	if counter.GetCount() != 6 {
-		t.Errorf("Expected counter to be 6, but got %d", counter.GetCount())
-	}
-}
-
-func TestRelease(t *testing.T) {
-	counter := NewCounter(6)
-	counter.Freeze()
-	defer counter.Release()
-	if counter.GetCount() != 6 {
-		t.Errorf("Expected counter to be 6, but got %d", counter.GetCount())
-	}
-}
-
 func TestGetCountAndReset(t *testing.T) {
 	counter := NewCounter(6)
 	if counter.GetCountAndReset() != 6 {

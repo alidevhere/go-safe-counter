@@ -40,24 +40,19 @@ type Counter[T any] interface {
 	// GetFinalValue() returns the final value of the counter. This method waits for all the go routines
 	// to finish before returning the final value of the counter.
 	GetFinalValue() T
-	// Freeze() freezes the counter value until Release() is not called. Any go routine that calls Increament(), Decreament(), IncrementBy(T) or DecrementBy(T)
-	// will be blocked until Release() is called.
-	Freeze()
-	// Release() releases the counter value lock. After this method is called, any go routine can again update the counter value.
-	Release()
 }
 
 func NewCounter[T incrementable](initialValue T) Counter[T] {
 	return &counter[T]{
 		count: initialValue,
-		lck:   &sync.Mutex{},
+		lck:   &sync.RWMutex{},
 		wg:    &sync.WaitGroup{},
 	}
 }
 
 type counter[T incrementable] struct {
 	count T
-	lck   *sync.Mutex
+	lck   *sync.RWMutex
 	wg    *sync.WaitGroup
 }
 
@@ -74,8 +69,8 @@ func (c *counter[T]) Decreament() {
 }
 
 func (c *counter[T]) GetCount() T {
-	c.lck.Lock()
-	defer c.lck.Unlock()
+	c.lck.RLock()
+	defer c.lck.RUnlock()
 	return c.count
 }
 
@@ -103,13 +98,13 @@ func (c *counter[T]) SetCount(n T) {
 	c.count = n
 }
 
-func (c *counter[T]) Freeze() {
-	c.lck.Lock()
-}
+// func (c *counter[T]) Freeze() {
+// 	c.lck.Lock()
+// }
 
-func (c *counter[T]) Release() {
-	c.lck.Unlock()
-}
+// func (c *counter[T]) Release() {
+// 	c.lck.Unlock()
+// }
 
 func (c *counter[T]) GetCountAndReset() T {
 	c.lck.Lock()
